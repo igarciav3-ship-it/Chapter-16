@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+
+                    this.quizScore = 0;
+                    this.quizSubmitted = false;
+                }
+            }
+        }<!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50">
 <head>
     <meta charset="UTF-8">
@@ -137,6 +142,10 @@
                     <div class="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10">
                         <i class="fa-solid fa-link text-sky-400"></i>
                         <span>Independent Clauses (Chart 16-3)</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-layer-group text-purple-300"></i>
+                        <span>Paired Conjunctions (Chart 16-4)</span>
                     </div>
                 </div>
             </div>
@@ -429,6 +438,70 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Chart 16-4 Focus (Paired / Correlative Conjunctions) -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 border-b pb-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg">
+                        ✨
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Azar & Hagen • Chart 16-4</span>
+                        <h3 class="text-xl font-bold text-slate-900">Paired Conjunctions (Correlative Conjunctions)</h3>
+                    </div>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6 font-normal">
+                    Paired conjunctions come in pairs to link two parallel words or phrases. Whatever structure follows the first word must match the structure following the second word.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200">
+                        <h4 class="font-bold text-purple-900 text-sm mb-2">1. Both ... and</h4>
+                        <p class="text-xs text-slate-700 mb-2">Connects two positive ideas. <strong class="text-purple-950 font-bold">Always takes a plural verb</strong> when connecting two subjects!</p>
+                        <div class="bg-white p-2.5 rounded-lg border border-purple-100 text-xs font-mono text-slate-800">
+                            • <strong class="text-purple-700">Both</strong> my sister <strong class="text-purple-700">and</strong> my brother <strong class="text-purple-900 underline font-bold">are</strong> coming.
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200">
+                        <h4 class="font-bold text-indigo-900 text-sm mb-2">2. Not only ... but also</h4>
+                        <p class="text-xs text-slate-700 mb-2">Emphasizes both elements. The verb agrees with the <strong class="text-indigo-950 font-bold">subject closest to it</strong>.</p>
+                        <div class="bg-white p-2.5 rounded-lg border border-indigo-100 text-xs font-mono text-slate-800">
+                            • <strong class="text-indigo-700">Not only</strong> the teacher <strong class="text-indigo-700">but also</strong> the students <strong class="text-indigo-900 underline font-bold">were</strong> late.
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
+                        <h4 class="font-bold text-amber-900 text-sm mb-2">3. Either ... or</h4>
+                        <p class="text-xs text-slate-700 mb-2">Indicates a choice between two options. Verb agrees with the <strong class="text-amber-950 font-bold">closest subject</strong>.</p>
+                        <div class="bg-white p-2.5 rounded-lg border border-amber-100 text-xs font-mono text-slate-800">
+                            • <strong class="text-amber-700">Either</strong> Maria <strong class="text-amber-700">or</strong> her sisters <strong class="text-amber-900 underline font-bold">have</strong> the keys.
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50/60 p-4 rounded-xl border border-rose-200">
+                        <h4 class="font-bold text-rose-900 text-sm mb-2">4. Neither ... nor</h4>
+                        <p class="text-xs text-slate-700 mb-2">Negates both options (not one, and not the other). Verb agrees with the <strong class="text-rose-950 font-bold">closest subject</strong>.</p>
+                        <div class="bg-white p-2.5 rounded-lg border border-rose-100 text-xs font-mono text-slate-800">
+                            • <strong class="text-rose-700">Neither</strong> the food <strong class="text-rose-700">nor</strong> the drinks <strong class="text-rose-900 underline font-bold">were</strong> ready.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-white rounded-xl p-4 text-xs sm:text-sm">
+                    <h5 class="font-bold text-yellow-400 mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced"></i> Parallel Form Rule with Paired Conjunctions:
+                    </h5>
+                    <p class="text-slate-300 font-normal">
+                        Make sure the grammatical components matching the pair are structurally identical:
+                    </p>
+                    <ul class="mt-2 space-y-1 text-slate-200 font-mono text-xs">
+                        <li class="text-emerald-400">✅ They noted not only <strong class="underline">the price</strong> [noun] but also <strong class="underline">the quality</strong> [noun].</li>
+                        <li class="text-rose-300">❌ They noted not only <strong class="underline">the price</strong> [noun] but also <strong class="underline">were checking quality</strong> [verb phrase].</li>
+                    </ul>
+                </div>
+            </section>
         </div>
 
         <!-- TAB 2: INTERACTIVE PRACTICE DRILLS -->
@@ -695,7 +768,7 @@
         <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
             <p class="font-semibold text-slate-300">Universidad Mariano Gálvez de Guatemala • School of Languages</p>
             <p>Course: English II | Chapter 16: Coordinating Conjunctions & Parallel Structure</p>
-            <p class="text-slate-500">Based on Betty S. Azar & Stacy A. Hagen Grammar Charts (16-1, 16-2, 16-3)</p>
+            <p class="text-slate-500">Based on Betty S. Azar & Stacy A. Hagen Grammar Charts (16-1, 16-2, 16-3, 16-4)</p>
         </div>
     </footer>
 
@@ -780,11 +853,6 @@
                 },
                 resetQuiz() {
                     this.userQuizAnswers = {};
-                    this.quizScore = 0;
-                    this.quizSubmitted = false;
-                }
-            }
-        }
     </script>
 </body>
 </html>
