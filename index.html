@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English II - Week 12 Learning Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        umg: {
+                            blue: '#002855',
+                            gold: '#D4AF37',
+                            red: '#C8102E',
+                            light: '#F0F4F8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .correct-anim {
+            animation: pulse-green 0.5s ease-in-out;
+        }
+        .wrong-anim {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-700 antialiased font-normal" x-data="appData()">
+
+    <!-- Top Branding Bar -->
+    <header class="bg-umg-blue text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center border-b border-blue-900/50">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center font-bold text-umg-blue shadow-inner text-xl">
+                    <i class="fa-solid font-black text-umg-red">UMG</i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        Universidad Mariano Gálvez
+                        <span class="bg-umg-gold text-slate-900 text-xs px-2 py-0.5 rounded-full font-semibold">English II</span>
+                    </h1>
+                    <p class="text-xs text-blue-200 font-normal">Asynchronous Learning Portal • September 26, 2026</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 mt-2 sm:mt-0 text-xs sm:text-sm">
+                <span class="bg-blue-950/80 px-3 py-1.5 rounded-full border border-blue-700/50 flex items-center gap-2 font-medium">
+                    <i class="fa-regular fa-clock text-yellow-400"></i>
+                    <span>WEEK 12</span>
+                </span>
+                <span class="bg-blue-950/80 px-3 py-1.5 rounded-full border border-blue-700/50 hidden md:flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-book-open text-emerald-400"></i>
+                    <span>Chapter 16</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="bg-blue-950/90 backdrop-blur border-t border-blue-800/40 px-4 sm:px-8">
+            <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-4 overflow-x-auto">
+                <button @click="currentTab = 'lesson'" 
+                        :class="currentTab === 'lesson' ? 'border-umg-gold text-yellow-300 bg-blue-900/40 font-semibold' : 'border-transparent text-slate-300 hover:text-white font-normal'"
+                        class="py-3 px-4 text-sm border-b-2 flex items-center gap-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Lesson & Rules
+                </button>
+                <button @click="currentTab = 'practice'" 
+                        :class="currentTab === 'practice' ? 'border-umg-gold text-yellow-300 bg-blue-900/40 font-semibold' : 'border-transparent text-slate-300 hover:text-white font-normal'"
+                        class="py-3 px-4 text-sm border-b-2 flex items-center gap-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-gamepad"></i>
+                    Interactive Drills
+                </button>
+                <button @click="currentTab = 'quiz'" 
+                        :class="currentTab === 'quiz' ? 'border-umg-gold text-yellow-300 bg-blue-900/40 font-semibold' : 'border-transparent text-slate-300 hover:text-white font-normal'"
+                        class="py-3 px-4 text-sm border-b-2 flex items-center gap-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-file-pen"></i>
+                    5-Question Quiz
+                    <span x-show="quizSubmitted" class="bg-emerald-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold" x-text="quizScore + '/5'"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Hero Module Banner with Background Image -->
+        <div class="relative rounded-2xl p-6 sm:p-8 mb-8 shadow-xl overflow-hidden bg-slate-900 text-white">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80" 
+                 onerror="this.onerror=null; this.src='https://placehold.co/1200x400/002855/ffffff?text=English+II+Grammar';" 
+                 alt="Grammar Study Background" 
+                 class="absolute inset-0 w-full h-full object-cover opacity-25" />
+            <div class="absolute inset-0 bg-gradient-to-r from-umg-blue via-indigo-950/90 to-slate-900/80"></div>
+            
+            <div class="relative z-10 max-w-3xl">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-400/20 text-yellow-300 border border-yellow-400/30 mb-3">
+                    <i class="fa-solid fa-brain"></i> Chapter 16: Azar & Hagen Grammar Series
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-bold tracking-tight mb-2">
+                    Coordinating Conjunctions & Parallel Structure
+                </h2>
+                <p class="text-blue-100 text-base sm:text-lg italic font-light">
+                    "Two Heads Are Better Than One - And Grammar Proves It!" 🧠🧠
+                </p>
+                
+                <div class="mt-6 flex flex-wrap gap-3 text-xs sm:text-sm font-normal">
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-check-double text-emerald-400"></i>
+                        <span>Parallelism (Chart 16-1)</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-quote-left text-yellow-400"></i>
+                        <span>Commas Rule (Chart 16-2)</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10">
+                        <i class="fa-solid fa-link text-sky-400"></i>
+                        <span>Independent Clauses (Chart 16-3)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: LESSON & RULES -->
+        <div x-show="currentTab === 'lesson'" x-transition:enter="transition ease-out duration-300 transform opacity-0 scale-95" class="space-y-8">
+            
+            <!-- Warm Up Section with Visuals -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
+                            🎯
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900">Warm-up - "Match It!"</h3>
+                            <p class="text-xs text-slate-500 font-normal">Let's start with a game that's as easy as 1, 2, 3! 🥧</p>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium px-2.5 py-1 bg-amber-50 text-amber-800 rounded-lg border border-amber-200">Warm-Up Activity</span>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-4 font-normal">
+                    Instructions: Look at these sentences. What do you notice about the connected parts?
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-center">
+                    <div class="lg:col-span-2 overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-semibold">Sentence</th>
+                                    <th class="p-3 font-semibold">What's connected?</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-3">Steve <span class="underline decoration-indigo-500 font-semibold">and</span> his friend are coming to dinner.</td>
+                                    <td class="p-3"><span class="bg-indigo-50 text-indigo-700 px-2 py-1 rounded font-mono text-xs">noun + and + noun</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">Susan raised her hand <span class="underline decoration-indigo-500 font-semibold">and</span> snapped her fingers.</td>
+                                    <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-mono text-xs">verb + and + verb</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">These shoes are old <span class="underline decoration-indigo-500 font-semibold">but</span> comfortable.</td>
+                                    <td class="p-3"><span class="bg-sky-50 text-sky-700 px-2 py-1 rounded font-mono text-xs">adjective + but + adjective</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">He wants to watch TV <span class="underline decoration-indigo-500 font-semibold">or</span> listen to some music.</td>
+                                    <td class="p-3"><span class="bg-purple-50 text-purple-700 px-2 py-1 rounded font-mono text-xs">infinitive + or + infinitive</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Illustrative Card Image for Parallel Concept -->
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 text-center">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" 
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x250/002855/ffffff?text=Matching+Shoes';" 
+                             alt="Matching Sneakers Example" 
+                             class="rounded-lg object-cover w-full h-36 mb-2 shadow-sm" />
+                        <span class="text-xs text-slate-500 block italic">Parallel structure is like wearing matching shoes! 👟👟</span>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 text-amber-900">
+                    <h4 class="font-bold text-sm flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i>
+                        Notice the pattern!
+                    </h4>
+                    <p class="text-sm mb-3 font-normal">When we connect words with <strong class="font-bold text-amber-950">AND, BUT, OR, NOR</strong>... the words must <strong class="font-bold text-amber-950">MATCH!</strong></p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div class="bg-white p-3 rounded-lg border border-emerald-300 shadow-sm">
+                            <span class="text-emerald-700 font-bold flex items-center gap-1 mb-1">
+                                <i class="fa-solid fa-circle-check"></i> Correct (Matching)
+                            </span>
+                            <ul class="space-y-1 text-slate-600 font-normal">
+                                <li>• old <strong class="font-semibold text-slate-800">but</strong> comfortable (adj + adj)</li>
+                                <li>• waving <strong class="font-semibold text-slate-800">and</strong> shouting (verb + verb)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-rose-300 shadow-sm">
+                            <span class="text-rose-700 font-bold flex items-center gap-1 mb-1">
+                                <i class="fa-solid fa-circle-xmark"></i> Incorrect (Not Matching)
+                            </span>
+                            <ul class="space-y-1 text-slate-600 font-normal">
+                                <li>• <span class="line-through text-slate-400">old but comfort</span> (adj + noun)</li>
+                                <li>• <span class="line-through text-slate-400">waving and shout</span> (verb + verb)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart 16-1 Focus -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 border-b pb-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+                        📚
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Azar & Hagen • Chart 16-1</span>
+                        <h3 class="text-xl font-bold text-slate-900">Grammar Focus - What is Parallel Structure?</h3>
+                    </div>
+                </div>
+
+                <blockquote class="bg-slate-50 border-l-4 border-indigo-600 p-4 rounded-r-xl text-slate-700 mb-6 text-sm sm:text-base font-normal">
+                    "One use of a conjunction is to connect words or phrases that have the <strong class="font-bold text-indigo-950">SAME grammatical function</strong>." 🤝
+                    <br>
+                    <span class="text-xs text-slate-500 mt-1 block font-normal">Conjunctions used: <strong class="font-bold text-slate-800">AND, BUT, OR, NOR</strong> (COORDINATING CONJUNCTIONS)</span>
+                </blockquote>
+
+                <div class="overflow-x-auto mb-6">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-indigo-900 text-white">
+                                <th class="p-3 font-semibold rounded-tl-lg">Example</th>
+                                <th class="p-3 font-semibold">Structure</th>
+                                <th class="p-3 font-semibold rounded-tr-lg">What's Connected</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 border-b text-slate-700">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3">(a) Steve <strong class="font-bold text-indigo-900">and</strong> his friend are coming.</td>
+                                <td class="p-3 font-mono text-xs text-indigo-600">noun + and + noun</td>
+                                <td class="p-3">Two nouns</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3">(b) Susan raised her hand <strong class="font-bold text-indigo-900">and</strong> snapped her fingers.</td>
+                                <td class="p-3 font-mono text-xs text-indigo-600">verb + and + verb</td>
+                                <td class="p-3">Two verbs</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3">(c) He is waving his arms <strong class="font-bold text-indigo-900">and</strong> (is) shouting.</td>
+                                <td class="p-3 font-mono text-xs text-indigo-600">verb + and + verb</td>
+                                <td class="p-3">Two verbs</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3">(d) These shoes are old <strong class="font-bold text-indigo-900">but</strong> comfortable.</td>
+                                <td class="p-3 font-mono text-xs text-indigo-600">adjective + but + adjective</td>
+                                <td class="p-3">Two adjectives</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3">(e) He wants to watch TV <strong class="font-bold text-indigo-900">or</strong> (to) listen to music.</td>
+                                <td class="p-3 font-mono text-xs text-indigo-600">infinitive + or + infinitive</td>
+                                <td class="p-3">Two infinitives</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Omission Rules Box -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                    <h4 class="font-bold text-sm text-indigo-900 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-indigo-600"></i> Important Notes on Omission:
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                        <div class="bg-white p-3 rounded-lg border border-indigo-100">
+                            <span class="font-bold text-indigo-900 block mb-1">1. Auxiliary Verbs</span>
+                            <p class="text-slate-600 font-normal">The second auxiliary may be omitted if it's the same as the first: <br><em class="text-indigo-950 font-medium">He is waving and (is) shouting.</em></p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg border border-indigo-100">
+                            <span class="font-bold text-indigo-900 block mb-1">2. Infinitives</span>
+                            <p class="text-slate-600 font-normal">The second "to" is usually omitted: <br><em class="text-indigo-950 font-medium">He wants to watch TV or (to) listen.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart 16-2 Focus -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 border-b pb-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg">
+                        📝
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Azar & Hagen • Chart 16-2</span>
+                        <h3 class="text-xl font-bold text-slate-900">Grammar Focus - Commas in Parallel Structure</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Rule 1: Two Items -->
+                    <div class="border border-purple-200 bg-purple-50/40 rounded-xl p-5">
+                        <div class="flex items-center gap-2 text-purple-900 font-bold mb-3">
+                            <span class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs">1</span>
+                            <h4>No Commas with TWO Items</h4>
+                        </div>
+                        
+                        <div class="space-y-2 text-sm font-normal">
+                            <div class="bg-white p-3 rounded-lg border border-emerald-300 flex justify-between items-center">
+                                <span>(a) Steve <strong class="font-bold">and</strong> Joe are in class.</span>
+                                <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">✅ NO comma</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-rose-300 flex justify-between items-center">
+                                <span>(b) Steve <strong class="font-bold">, and</strong> Joe are in class.</span>
+                                <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">❌ INCORRECT</span>
+                            </div>
+                        </div>
+                        <p class="text-xs font-semibold text-purple-800 mt-3 text-center">"Two items? No comma!" 🚫</p>
+                    </div>
+
+                    <!-- Rule 2: Three or More Items -->
+                    <div class="border border-indigo-200 bg-indigo-50/40 rounded-xl p-5">
+                        <div class="flex items-center gap-2 text-indigo-900 font-bold mb-3">
+                            <span class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">2</span>
+                            <h4>Commas with THREE or More Items</h4>
+                        </div>
+                        
+                        <div class="space-y-2 text-xs sm:text-sm font-normal">
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                <span>(c) Steve <strong class="font-bold text-indigo-600">,</strong> Joe <strong class="font-bold">and</strong> Rita are in class.</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                <span>(d) Steve <strong class="font-bold text-indigo-600">,</strong> Joe <strong class="font-bold text-indigo-600">, and</strong> Rita are in class.</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                <span>(e) Steve <strong class="font-bold text-indigo-600">,</strong> Joe <strong class="font-bold text-indigo-600">,</strong> Rita <strong class="font-bold text-indigo-600">,</strong> Jan <strong class="font-bold">and</strong> Kim...</span>
+                            </div>
+                        </div>
+                        <p class="text-xs font-semibold text-indigo-800 mt-3 text-center">"The comma before 'and' (Oxford comma) is OPTIONAL!" 🎤</p>
+                    </div>
+                </div>
+
+                <!-- Illustrative Image Banner for Writing & Punctuation -->
+                <div class="rounded-xl overflow-hidden border border-slate-200 flex flex-col md:flex-row bg-slate-50">
+                    <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x300/002855/ffffff?text=Writing+Punctuation';" 
+                         alt="Punctuation Notebook" 
+                         class="w-full md:w-1/3 object-cover h-36 md:h-auto" />
+                    <div class="p-4 flex flex-col justify-center text-xs sm:text-sm text-slate-600 font-normal">
+                        <h5 class="font-bold text-slate-800 text-base mb-1">Punctuation Tip</h5>
+                        <p>Punctuation brings clarity to your academic writing. When listing three or more items in an essay, using clear commas ensures your reader follows your ideas effortlessly!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart 16-3 Focus -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 border-b pb-4 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">
+                        🔗
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Azar & Hagen • Chart 16-3</span>
+                        <h3 class="text-xl font-bold text-slate-900">Connecting Independent Clauses with AND & BUT</h3>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 mb-6 text-sm text-emerald-950 font-normal">
+                    <strong class="font-bold text-emerald-900">An independent clause</strong> = a complete sentence (Subject + Verb + Complete Thought).
+                    <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                        <span class="bg-white px-2.5 py-1 rounded border border-emerald-300 font-mono">It was raining hard. (S+V)</span>
+                        <span class="bg-white px-2.5 py-1 rounded border border-emerald-300 font-mono">There was a strong wind. (S+V)</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-6">
+                    <h4 class="font-bold text-sm text-slate-800">3 Correct Ways to Connect Independent Clauses:</h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Method 1</span>
+                            <span class="font-bold text-slate-800 text-sm block">Use a PERIOD (.)</span>
+                            <p class="text-xs text-slate-600 mt-2 font-mono">It was raining hard<strong class="text-rose-600 font-bold">.</strong> There was a strong wind.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Method 2</span>
+                            <span class="font-bold text-slate-800 text-sm block">Use a SEMICOLON (;)</span>
+                            <p class="text-xs text-slate-600 mt-2 font-mono">It was raining hard<strong class="text-indigo-600 font-bold text-base">;</strong> there was a strong wind.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Method 3</span>
+                            <span class="font-bold text-slate-800 text-sm block">COMMA + AND / BUT</span>
+                            <p class="text-xs text-slate-600 mt-2 font-mono">It was raining hard<strong class="text-emerald-600 font-bold text-base">, and</strong> there was a strong wind.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 text-rose-900 text-sm flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xl"></i>
+                    <div class="font-normal">
+                        <strong class="font-bold text-rose-950">NEVER use just a COMMA (Comma Splice)!</strong>
+                        <p class="text-xs text-rose-700 mt-0.5">
+                            ❌ <em>It was raining hard, there was a strong wind.</em> (INCORRECT - A comma alone is NOT enough!)
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 2: INTERACTIVE PRACTICE DRILLS -->
+        <div x-show="currentTab === 'practice'" x-transition:enter="transition ease-out duration-300 transform opacity-0 scale-95" class="space-y-8">
+            
+            <!-- Activity 1: Parallel or Not? -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200" x-data="{ 
+                items: [
+                    { id: 1, text: '1. She likes reading, writing, and to paint.', correct: false, reason: 'reading, writing (gerunds) + to paint (infinitive) ❌', userChoice: null },
+                    { id: 2, text: '2. She likes reading, writing, and painting.', correct: true, reason: 'All gerunds! ✅', userChoice: null },
+                    { id: 3, text: '3. He is smart, funny, and kind.', correct: true, reason: 'All adjectives! ✅', userChoice: null },
+                    { id: 4, text: '4. He is smart, funny, and has kindness.', correct: false, reason: 'smart, funny (adjectives) + has kindness (verb phrase) ❌', userChoice: null },
+                    { id: 5, text: '5. I want to travel, to learn, and to grow.', correct: true, reason: 'All infinitives! ✅', userChoice: null },
+                    { id: 6, text: '6. I want to travel, learning, and growth.', correct: false, reason: 'to travel (infinitive) + learning (gerund) + growth (noun) ❌', userChoice: null }
+                ]
+            }">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div>
+                        <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Slide 5 Drill</span>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            🏁 Practice 1: "Parallel or Not?"
+                        </h3>
+                    </div>
+                    <span class="text-xs bg-slate-100 text-slate-700 font-mono px-2.5 py-1 rounded">Interactive Check</span>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-6 font-normal">
+                    Click <strong class="font-bold text-slate-800">PARALLEL ✅</strong> or <strong class="font-bold text-slate-800">NOT PARALLEL ❌</strong> for each sentence below:
+                </p>
+
+                <div class="space-y-4">
+                    <template x-for="item in items" :key="item.id">
+                        <div class="p-4 rounded-xl border transition-all"
+                             :class="{
+                                'bg-slate-50 border-slate-200': item.userChoice === null,
+                                'bg-emerald-50 border-emerald-300 correct-anim': item.userChoice !== null && item.userChoice === item.correct,
+                                'bg-rose-50 border-rose-300 wrong-anim': item.userChoice !== null && item.userChoice !== item.correct
+                             }">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <p class="text-slate-800 text-sm sm:text-base font-normal" x-text="item.text"></p>
+                                
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button @click="item.userChoice = true" 
+                                            :disabled="item.userChoice !== null"
+                                            :class="item.userChoice === true ? (item.correct ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'"
+                                            class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition shadow-sm">
+                                        Parallel ✅
+                                    </button>
+                                    <button @click="item.userChoice = false" 
+                                            :disabled="item.userChoice !== null"
+                                            :class="item.userChoice === false ? (!item.correct ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'"
+                                            class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition shadow-sm">
+                                        Not Parallel ❌
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Feedback -->
+                            <div x-show="item.userChoice !== null" class="mt-3 pt-2 border-t border-slate-200/60 text-xs font-medium"
+                                 :class="item.userChoice === item.correct ? 'text-emerald-800' : 'text-rose-800'">
+                                <span x-text="item.userChoice === item.correct ? '🎉 Correct! ' : '⚠️ Incorrect. '"></span>
+                                <span x-text="item.reason" class="font-normal"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- Activity 2: Comma or No Comma? -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200" x-data="{
+                commaDrills: [
+                    { id: 1, sentence: '1. Steve and Joe are in class.', answer: 'no_comma', exp: '✅ No comma needed (2 items connected)' },
+                    { id: 2, sentence: '2. Steve [?] Joe [?] and Rita are in class.', answer: 'commas', exp: '✅ Commas needed: Steve, Joe, and Rita (3 items)' },
+                    { id: 3, sentence: '3. I like pizza and pasta.', answer: 'no_comma', exp: '✅ No comma needed (2 items connected)' },
+                    { id: 4, sentence: '4. I like pizza [?] pasta [?] and salad.', answer: 'commas', exp: '✅ Commas needed: pizza, pasta, and salad (3 items)' },
+                    { id: 5, sentence: '5. She is smart [?] funny [?] and kind.', answer: 'commas', exp: '✅ Commas needed: smart, funny, and kind (3 adjectives)' }
+                ],
+                userAnswers: {}
+            }">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div>
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Slide 7 Drill</span>
+                        <h3 class="text-xl font-bold text-slate-900">🎯 Practice 2: "Comma or No Comma?"</h3>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <template x-for="drill in commaDrills" :key="drill.id">
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <p class="text-slate-800 text-sm font-normal" x-text="drill.sentence"></p>
+                                <p x-show="userAnswers[drill.id]" x-text="drill.exp" class="text-xs font-semibold text-indigo-700 mt-1"></p>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button @click="userAnswers[drill.id] = 'no_comma'" 
+                                        :class="userAnswers[drill.id] === 'no_comma' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-100'"
+                                        class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold shadow-sm">
+                                    No Comma (2 items)
+                                </button>
+                                <button @click="userAnswers[drill.id] = 'commas'" 
+                                        :class="userAnswers[drill.id] === 'commas' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-100'"
+                                        class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold shadow-sm">
+                                    Use Commas (3+ items)
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <!-- Activity 3: Error Detective -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200" x-data="{
+                errors: [
+                    { id: 1, original: 'She likes reading, writing, and to paint.', status: 'Incorrect', fix: 'She likes reading, writing, and painting.', reason: 'Fix parallel structure (all gerunds)' },
+                    { id: 2, original: 'Steve, and Joe are in class.', status: 'Incorrect', fix: 'Steve and Joe are in class.', reason: 'Remove unnecessary comma with 2 items' },
+                    { id: 3, original: 'It was raining hard, there was a strong wind.', status: 'Incorrect', fix: 'It was raining hard; there was a strong wind. OR It was raining hard, and there was a strong wind.', reason: 'Fix comma splice using semicolon or comma + conjunction' },
+                    { id: 4, original: 'I like pizza, pasta, and salad.', status: 'Correct', fix: 'No correction needed!', reason: 'Perfect parallel list with commas' },
+                    { id: 5, original: 'She is smart, funny, and has kindness.', status: 'Incorrect', fix: 'She is smart, funny, and kind.', reason: 'Make all words adjectives (kind instead of has kindness)' }
+                ],
+                revealed: {}
+            }">
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <div>
+                        <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Slide 13 Detective Game</span>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            🕵️ Practice 3: "Error Hunt - Detective Game"
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <template x-for="err in errors" :key="err.id">
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                <p class="font-mono text-sm text-slate-800" x-text="err.original"></p>
+                                <button @click="revealed[err.id] = !revealed[err.id]" 
+                                        class="self-start sm:self-auto px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                                    <span x-text="revealed[err.id] ? 'Hide Diagnosis' : 'Inspect Error 🔍'"></span>
+                                </button>
+                            </div>
+
+                            <div x-show="revealed[err.id]" x-transition class="mt-3 p-3 bg-white rounded-lg border border-amber-300 text-xs space-y-1 font-normal">
+                                <p class="font-bold text-slate-700">Status: <span class="text-rose-600" x-text="err.status"></span></p>
+                                <p class="text-emerald-700 font-semibold">Corrected: <span x-text="err.fix"></span></p>
+                                <p class="text-slate-500 italic" x-text="err.reason"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 3: 5-QUESTION QUIZ -->
+        <div x-show="currentTab === 'quiz'" x-transition:enter="transition ease-out duration-300 transform opacity-0 scale-95" class="space-y-6">
+            
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between border-b pb-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">English II • UMG Assessment</span>
+                        <h3 class="text-2xl font-bold text-slate-900">Chapter 16 Evaluation Quiz</h3>
+                        <p class="text-xs text-slate-500 mt-1 font-normal">Select the best answer for each of the 5 questions based on your class material.</p>
+                    </div>
+                    
+                    <div x-show="quizSubmitted" class="text-right">
+                        <span class="text-2xl font-bold text-indigo-900" x-text="quizScore + '/5'"></span>
+                        <span class="text-xs text-slate-500 block font-normal">Final Score</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Questions List -->
+                <div class="space-y-8">
+                    <template x-for="(q, index) in quizQuestions" :key="q.id">
+                        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50"
+                             :class="{
+                                'border-emerald-300 bg-emerald-50/30': quizSubmitted && userQuizAnswers[q.id] === q.correct,
+                                'border-rose-300 bg-rose-50/30': quizSubmitted && userQuizAnswers[q.id] !== undefined && userQuizAnswers[q.id] !== q.correct
+                             }">
+                            
+                            <div class="flex items-start gap-3 mb-4">
+                                <span class="w-7 h-7 rounded-full bg-indigo-900 text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5" x-text="index + 1"></span>
+                                <h4 class="font-semibold text-slate-900 text-base" x-text="q.question"></h4>
+                            </div>
+
+                            <div class="space-y-2.5 ml-0 sm:ml-10">
+                                <template x-for="(opt, oIndex) in q.options" :key="oIndex">
+                                    <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition text-sm font-normal"
+                                           :class="{
+                                              'border-indigo-600 bg-indigo-50/50 text-indigo-900 font-semibold': userQuizAnswers[q.id] === oIndex,
+                                              'border-emerald-500 bg-emerald-100 text-emerald-900 font-bold': quizSubmitted && oIndex === q.correct,
+                                              'border-rose-400 bg-rose-100 text-rose-900 line-through opacity-75': quizSubmitted && userQuizAnswers[q.id] === oIndex && oIndex !== q.correct
+                                           }">
+                                        <input type="radio" 
+                                               :name="'q_' + q.id" 
+                                               :value="oIndex"
+                                               :disabled="quizSubmitted"
+                                               @change="userQuizAnswers[q.id] = oIndex"
+                                               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                                        <span class="ml-3" x-text="opt"></span>
+                                    </label>
+                                </template>
+                            </div>
+
+                            <!-- Explanation Feedback -->
+                            <div x-show="quizSubmitted" class="mt-4 ml-0 sm:ml-10 p-3 rounded-xl text-xs font-normal"
+                                 :class="userQuizAnswers[q.id] === q.correct ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-rose-100 text-rose-900 border border-rose-200'">
+                                <p class="font-bold mb-1">
+                                    <span x-text="userQuizAnswers[q.id] === q.correct ? '✅ Correct Answer!' : '❌ Incorrect'"></span>
+                                </p>
+                                <p x-text="q.explanation"></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Submit Button / Results -->
+                <div class="mt-8 border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button x-show="!quizSubmitted" 
+                            @click="submitQuiz()" 
+                            :disabled="Object.keys(userQuizAnswers).length < 5"
+                            :class="Object.keys(userQuizAnswers).length === 5 ? 'bg-umg-blue hover:bg-blue-900 text-white' : 'bg-slate-300 text-slate-500 cursor-not-allowed'"
+                            class="w-full sm:w-auto px-8 py-3 rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Submit Quiz & Check Score
+                    </button>
+
+                    <button x-show="quizSubmitted" 
+                            @click="resetQuiz()" 
+                            class="w-full sm:w-auto px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-sm shadow transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Retake Quiz
+                    </button>
+
+                    <span x-show="!quizSubmitted" class="text-xs text-slate-500 font-normal">
+                        Answered <strong class="font-bold" x-text="Object.keys(userQuizAnswers).length"></strong> of <strong class="font-bold">5</strong> questions
+                    </span>
+                </div>
+
+                <!-- Completion Badge Certificate Box with Photo -->
+                <div x-show="quizSubmitted" class="mt-8 relative rounded-2xl overflow-hidden p-6 text-white text-center shadow-xl bg-slate-900">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/1000x300/002855/ffffff?text=Congratulations';" 
+                         alt="Graduation Achievement" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-20" />
+                    <div class="absolute inset-0 bg-gradient-to-r from-umg-blue/90 via-indigo-950/90 to-slate-900/90"></div>
+
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-yellow-400 text-slate-900 rounded-full text-2xl font-bold mb-3 shadow-lg">
+                            🏆
+                        </div>
+                        <h4 class="text-xl font-bold">Universidad Mariano Gálvez</h4>
+                        <p class="text-xs text-yellow-300 font-semibold uppercase tracking-wider mt-0.5">English II • Chapter 16 Mastery Badge</p>
+                        <p class="text-sm text-blue-100 mt-2 max-w-md mx-auto font-normal">
+                            You scored <strong class="text-yellow-300 text-lg font-bold" x-text="quizScore + '/5'"></strong> on Coordinating Conjunctions & Parallel Structure.
+                        </p>
+                        <p class="text-xs text-blue-200 mt-3 italic font-normal">Keep practicing to keep your grammar matching like a pair of shoes! 👟👟</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12 font-normal">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-semibold text-slate-300">Universidad Mariano Gálvez de Guatemala • School of Languages</p>
+            <p>Course: English II | Chapter 16: Coordinating Conjunctions & Parallel Structure</p>
+            <p class="text-slate-500">Based on Betty S. Azar & Stacy A. Hagen Grammar Charts (16-1, 16-2, 16-3)</p>
+        </div>
+    </footer>
+
+    <script>
+        function appData() {
+            return {
+                currentTab: 'lesson',
+                quizSubmitted: false,
+                quizScore: 0,
+                userQuizAnswers: {},
+                quizQuestions: [
+                    {
+                        id: 1,
+                        question: "Which sentence correctly demonstrates parallel structure according to Chart 16-1?",
+                        options: [
+                            "She likes swimming, running, and to bike.",
+                            "She likes swimming, running, and biking.",
+                            "She likes swim, running, and to bike.",
+                            "She likes to swim, running, and biking."
+                        ],
+                        correct: 1,
+                        explanation: "All items in the list must be in the same form (gerunds: swimming, running, biking)."
+                    },
+                    {
+                        id: 2,
+                        question: "According to Chart 16-2, when should commas NOT be used between connected items?",
+                        options: [
+                            "When connecting three items in a series.",
+                            "When connecting two items with 'and' or 'but'.",
+                            "When using an Oxford comma before 'and'.",
+                            "When connecting four or more nouns."
+                        ],
+                        correct: 1,
+                        explanation: "Two items connected with a conjunction do NOT require a comma (e.g., 'Steve and Joe are in class')."
+                    },
+                    {
+                        id: 3,
+                        question: "How can two independent clauses be correctly connected without creating a comma splice?",
+                        options: [
+                            "With a comma alone: 'It was raining, there was wind.'",
+                            "With a comma + coordinating conjunction: 'It was raining hard, and there was a strong wind.'",
+                            "By placing a comma after the verb in the second sentence.",
+                            "With a conjunction without any punctuation."
+                        ],
+                        correct: 1,
+                        explanation: "Chart 16-3 states independent clauses require a period, a semicolon, or a comma + coordinating conjunction (and/but)."
+                    },
+                    {
+                        id: 4,
+                        question: "Which of the following sentences contains an error in parallel structure?",
+                        options: [
+                            "He is smart, funny, and kind.",
+                            "He wants to travel, to learn, and to grow.",
+                            "He is smart, funny, and has kindness.",
+                            "These shoes are old but comfortable."
+                        ],
+                        correct: 2,
+                        explanation: "'smart' and 'funny' are adjectives, but 'has kindness' is a verb phrase, breaking parallel structure."
+                    },
+                    {
+                        id: 5,
+                        question: "Which option correctly fixes the punctuation error in: 'It was late, he didn't care.'?",
+                        options: [
+                            "It was late, but he didn't care.",
+                            "It was late, he didn't care.",
+                            "It was late and he, didn't care.",
+                            "It was late but, he didn't care."
+                        ],
+                        correct: 0,
+                        explanation: "Connecting two independent clauses requires a comma followed immediately by the conjunction 'but'."
+                    }
+                ],
+                submitQuiz() {
+                    let score = 0;
+                    this.quizQuestions.forEach(q => {
+                        if (this.userQuizAnswers[q.id] === q.correct) {
+                            score++;
+                        }
+                    });
+                    this.quizScore = score;
+                    this.quizSubmitted = true;
+                },
+                resetQuiz() {
+                    this.userQuizAnswers = {};
+                    this.quizScore = 0;
+                    this.quizSubmitted = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
